@@ -3,6 +3,8 @@ body{
 }
 
 .loginbox{
+    display: flex;
+    flex-direction: column;
     width: 420px;
     height: 390px;
     background: #ffff;
