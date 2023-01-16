@@ -1,8 +1,11 @@
-body{
-    background: linear-gradient(-225deg, #69EACB 0%, #EACCF8 48%, #6654F1 100%);
+.nav ul{
+    padding:0;
+    margin:0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
 }
 
-button{
-    background-color: rgb(5, 147, 147);
-    border-radius: 5px;
+.navbar{
+    background-color: palegreen;
 }
