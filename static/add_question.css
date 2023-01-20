@@ -86,11 +86,13 @@ input[type="text"] {
     border-radius: 6px;
     height: 30px;
     width: 350px;
+    padding: 0 2rem;
 }
 
 input[name="question"]{
     width: 475px;
     margin-right: 25px;
+    padding: 0 2rem;
 }
 
 .option {
