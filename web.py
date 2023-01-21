@@ -14,5 +14,9 @@ def admin_login():
 def user_login():
     return render_template("user_login.html")
 
+@web.route("/register/")
+def register():
+    return render_template("register.html")
+
 if __name__=="__main__":
     web.run(debug=True,port=8000)
