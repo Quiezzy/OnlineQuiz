@@ -18,10 +18,7 @@ def user_login():
 def register():
     return render_template("register.html")
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7698501313a886d8174aba689ce8435f43318444
 if __name__=="__main__":
     web.run(debug=True,port=8000)
 
