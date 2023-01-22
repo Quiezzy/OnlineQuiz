@@ -40,7 +40,7 @@
     color:#fff;
     font-size: 1.1rem;
 }
-.sidebar-menu a.active{
+.active:hover{
     background: #fff;
     padding-top: 1rem;
     padding-bottom: 1rem;
