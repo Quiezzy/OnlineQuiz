@@ -54,11 +54,11 @@ def doReg():
 
 @web.route("/admin_home/")
 def admin_home():
-    return render_template("home.html")
+    return render_template("admin_home.html")
 
 @web.route("/user_home/")
 def user_home():
-    return render_template("student_home.html")
+    return render_template("user_home.html")
 
 @web.route("/loginadmin/",methods=["POST"])
 def adm_log():

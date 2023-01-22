@@ -84,8 +84,9 @@ button{
     height: 50px;
     cursor:pointer;
 }
-button:hover{
+.btn:hover{
   opacity: .7;
+
 }
 .signup-form-footer{
     text-align: center;
