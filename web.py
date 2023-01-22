@@ -22,7 +22,6 @@ def user_login():
 def register():
     return render_template("register.html")
 
-
 @web.route("/reg/",methods=["POST"])
 def doReg():
     selectedValue= request.form['size']
@@ -92,3 +91,4 @@ def us_log():
 if __name__=="__main__":
     web.run(debug=True,port=8000)
 
+    
