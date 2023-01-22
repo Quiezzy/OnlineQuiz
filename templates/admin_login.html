@@ -15,17 +15,17 @@
                 <h1>Quizit</h1>
                 <h2>Admin Login</h2>
             </div>
-            <form class="login-form">
+            <form class="login-form" action="/loginadmin" method="post">
                 <div class="login-form-content">
                     
                     <div class="form-item">
                         
-                        <label for="username" class="label">Username</label><br>
-                        <input type="text" id="name" placeholder="Enter Username">
+                        <label for="email" class="label">Email</label><br>
+                        <input type="text" name="email" id="email" placeholder="Enter Email">
                     </div>
                     <div class="form-item">
                         <label for="password" class="label">Password</label><br>
-                        <input type="password" id="password" placeholder="Enter password">
+                        <input type="password" name="password" id="password" placeholder="Enter password">
                     </div>
                     <button type="signup">Sign In</button>
                 </div>
