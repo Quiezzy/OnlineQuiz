@@ -1,7 +1,11 @@
-from flask import Flask,render_template, request , redirect , url_for,session
+from flask import Flask,render_template, request , redirect , url_for,session, flash
+import tkinter
+from tkinter import *
+from tkinter import messagebox
 from db import *
-web =Flask(__name__)
 
+web =Flask(__name__)
+web.secret_key='secretkey'
 @web.route("/")
 def login():
     return render_template("login.html")
@@ -48,6 +52,42 @@ def doReg():
      database_connection.commit()
      database_connection.close()
      return redirect(url_for("user_login"))
+
+@web.route("/admin_home/")
+def admin_home():
+    return render_template("student_home.html")
+
+@web.route("/user_home/")
+def user_home():
+    return render_template("home.html")
+
+@web.route("/loginadmin/",methods=["POST"])
+def adm_log():
+    email=request.form["email"]
+    password=request.form["password"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
+    result=database_cursor.fetchone()
+    if result:
+        flash("login Successful")
+        return redirect('/admin_home/')
+    else:
+        return redirect('/admin_login/')
+
+@web.route("/loginuser/",methods=["POST"])
+def us_log():
+    email=request.form["email"]
+    password=request.form["password"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("select * from register_user where email=? and password=? ",(email,password))
+    result=database_cursor.fetchone()
+    if result:
+        flash("login Successful")
+        return redirect('/user_home/')
+    else:
+        return redirect('/user/')
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)
