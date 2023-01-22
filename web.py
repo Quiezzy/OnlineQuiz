@@ -54,11 +54,11 @@ def doReg():
 
 @web.route("/admin_home/")
 def admin_home():
-    return render_template("student_home.html")
+    return render_template("home.html")
 
 @web.route("/user_home/")
 def user_home():
-    return render_template("home.html")
+    return render_template("student_home.html")
 
 @web.route("/loginadmin/",methods=["POST"])
 def adm_log():
@@ -88,7 +88,14 @@ def us_log():
     else:
         return redirect('/user/')
 
+@web.route("/add_ques/")
+def add_ques():
+    return render_template("add_question.html")
+
+
+
 if __name__=="__main__":
     web.run(debug=True,port=8000)
+
 
     
