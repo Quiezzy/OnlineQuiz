@@ -36,7 +36,8 @@
             </ul>
         </div>
     </div>
-    <div class="main-content">
+    <form class="addques" action="/add_question" method="post">
+     <div class="main-content">
            <div class="page_title">Add Question</div>
             <div class="question"><span id="question"><input type="text" name="question" class="question" id="ques" placeholder="Enter Question"></span></div>
              
@@ -51,7 +52,8 @@
                   <option value="Option C">
                   <option value="Option D">
                 </datalist></span>
-                <span><button type="submit" name = "btn">Submit</button></span>
+                <span><button onclick="location.href='/add_ques/'" type="submit" name = "btn">Submit</button></span>
     </div>
+   </form>
 </body>
 </html>
