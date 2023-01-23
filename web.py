@@ -122,6 +122,14 @@ def add_question():
     database_connection.close()
     return redirect("/add_ques/")
 
+@web.route("/create_quiz/")   
+def create_quiz():
+    quiz_id=request.form["quiz_id"]
+    quiz_name=request.form["quiz_name"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("insert into Quiz (quizId,quizName) values (?)",(quiz_id,quiz_name))
+    result = database_cursor.fetchone()
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)

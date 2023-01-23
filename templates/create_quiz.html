@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Question</title>
-    <link rel="stylesheet" href="/static/add_question.css">
+    <link rel="stylesheet" href="/static/create_quiz.css">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
 </head>
@@ -36,24 +36,16 @@
             </ul>
         </div>
     </div>
-    <form class="addques" action="/add_question" method="post">
-     <div class="main-content">
-           <div class="page_title">Add Question</div>
-            <div class="question"><span id="question"><input type="text" name="question" class="question" id="ques" placeholder="Enter Question"></span></div>
-             
-            <span class="option"><input  type="text" name="optiona" id="" placeholder="Enter option A"></span>
-            <span class="option"><input  type="text" name="optionb" id="" placeholder="Enter option B"></span>
-            <span class="option"><input  type="text" name="optionc" id="" placeholder="Enter option C"></span>
-            <span class="option"><input  type="text" name="optiond" id="" placeholder="Enter option D"></span>
-            <span class="option"><input type="text" name="correct_op"placeholder="Enter Correct Option" list="correct_op">
-                <datalist id="correct_op">
-                  <option value="Option A">
-                  <option value="Option B">
-                  <option value="Option C">
-                  <option value="Option D">
-                </datalist></span>
-                <span><button onclick="location.href='/add_ques/'" type="submit" name = "btn">Submit</button></span>
-    </div>
-   </form>
+    <form action="">
+    <div class="main-content">
+           <div class="page_title">Create Quiz</div>
+            <div class="add_question">
+                
+            <span id="question"><input type="text" name="quiz_id" class="quiz" id="quiz" placeholder="Enter Quiz Id"></span>
+            <span id="question"><input type="text" name="quiz_name" class="quiz" id="quiz" placeholder="Enter Quiz Name"></span>
+        
+        </div>
+                <span><button type="submit"onclick="location.href='/add_ques/'"  name = "btn" target="_blank ">Add Question</button></span>
+    </div></form>
 </body>
 </html>
