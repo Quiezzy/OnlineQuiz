@@ -90,21 +90,46 @@ def us_log():
 
 @web.route("/add_ques/")
 def add_ques():
+    return render_template("add_question.html")
+    
+@web.route("/add_question",methods=["POST"])
+def add_question():
     question=request.form["question"]
+    print("Question:",question)
     optiona=request.form["optiona"]
+    print("options",optiona)
     optionb=request.form["optionb"]
+    print("options",optionb)
     optionc=request.form["optionc"]
+    print("options",optionc)
     optiond=request.form["optiond"]
+    print("options",optiond)
     correct_op=request.form["correct_op"]
-    print(correct_op)
+    if(correct_op=="Option A"):
+     global co_ans
+     co_ans=optiona
+    elif(correct_op=="Option B"):
+        co_ans=optionb
+    elif(correct_op=="Option C"):
+        co_ans=optionc
+    elif(correct_op=="Option D"):
+        co_ans=optiond
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    database_cursor.execute("insert into question (question) values (?)",(question))
-    database_cursor.execute("select * from ans where op1=? and op2=? and op3=? and op4=? and "(optiona,optionb,optionc,optiond))
-    result=database_cursor.fetchone()
-    
+    database_cursor.execute("insert into question (qName) values(?)",(question,))
+    database_cursor.execute("insert into ans (op1,op2,op3,op4,co) values(?,?,?,?,?)",(optiona,optionb,optionc,optiond,co_ans))
+    database_connection.commit()
+    database_connection.close()
+    return redirect("/add_ques/")
 
-
+@web.route("/create_quiz/")   
+def create_quiz():
+    quiz_id=request.form["quiz_id"]
+    quiz_name=request.form["quiz_name"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("insert into Quiz (quizId,quizName) values (?)",(quiz_id,quiz_name))
+    result = database_cursor.fetchone()
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)
