@@ -90,7 +90,19 @@ def us_log():
 
 @web.route("/add_ques/")
 def add_ques():
-    return render_template("add_question.html")
+    question=request.form["question"]
+    optiona=request.form["optiona"]
+    optionb=request.form["optionb"]
+    optionc=request.form["optionc"]
+    optiond=request.form["optiond"]
+    correct_op=request.form["correct_op"]
+    print(correct_op)
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("insert into question (question) values (?)",(question))
+    database_cursor.execute("select * from ans where op1=? and op2=? and op3=? and op4=? and "(optiona,optionb,optionc,optiond))
+    result=database_cursor.fetchone()
+    
 
 
 
