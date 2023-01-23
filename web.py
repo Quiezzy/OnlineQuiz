@@ -92,18 +92,27 @@ def us_log():
 def add_ques():
     return render_template("add_question.html")
     
+quiz_id=int(0)
+@web.route("/create_quiz/",methods=["POST"])   
+def create_quiz():
+    global quiz_id
+    quiz_id=request.form["quiz_id"]
+    quiz_name=request.form["quiz_name"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("insert into Quiz (quizId,quizName) values (?,?)",(quiz_id,quiz_name))
+    database_connection.commit()
+    database_connection.close()
+    return redirect("/add_ques/")
+
+
 @web.route("/add_question",methods=["POST"])
 def add_question():
     question=request.form["question"]
-    print("Question:",question)
     optiona=request.form["optiona"]
-    print("options",optiona)
     optionb=request.form["optionb"]
-    print("options",optionb)
     optionc=request.form["optionc"]
-    print("options",optionc)
     optiond=request.form["optiond"]
-    print("options",optiond)
     correct_op=request.form["correct_op"]
     if(correct_op=="Option A"):
      global co_ans
@@ -116,20 +125,19 @@ def add_question():
         co_ans=optiond
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    database_cursor.execute("insert into question (qName) values(?)",(question,))
-    database_cursor.execute("insert into ans (op1,op2,op3,op4,co) values(?,?,?,?,?)",(optiona,optionb,optionc,optiond,co_ans))
+    print("Quiz_id",quiz_id)
+    database_cursor.execute("insert into question (quizId,qName) values(?,?)",(quiz_id,question,))
+    database_cursor.execute("select qId from question where quizId=(?) and qName=(?)",(quiz_id,question))
+    q_id=database_cursor.fetchone()[0]
+    database_cursor.execute("insert into ans (qId,op1,op2,op3,op4,co) values(?,?,?,?,?,?)",(q_id,optiona,optionb,optionc,optiond,co_ans))
     database_connection.commit()
     database_connection.close()
     return redirect("/add_ques/")
 
-@web.route("/create_quiz/")   
-def create_quiz():
-    quiz_id=request.form["quiz_id"]
-    quiz_name=request.form["quiz_name"]
-    database_connection=sqlite3.connect("quizitDatabase.db")
-    database_cursor=database_connection.cursor()
-    database_cursor.execute("insert into Quiz (quizId,quizName) values (?)",(quiz_id,quiz_name))
-    result = database_cursor.fetchone()
+
+@web.route("/quiz/")   
+def quiz():
+    return render_template("create_quiz.html")
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)
