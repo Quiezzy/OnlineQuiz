@@ -102,9 +102,16 @@ def add_ques():
     database_cursor.execute("insert into question (question) values (?)",(question))
     database_cursor.execute("select * from ans where op1=? and op2=? and op3=? and op4=? and "(optiona,optionb,optionc,optiond))
     result=database_cursor.fetchone()
-    
 
 
+@web.route("/create_quiz/")   
+def create_quiz():
+    quiz_id=request.form["quiz_id"]
+    quiz_name=request.form["quiz_name"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("insert into Quiz (quizId,quizName) values (?)",(quiz_id,quiz_name))
+    result = database_cursor.fetchone()
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)
