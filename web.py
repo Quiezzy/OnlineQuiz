@@ -161,17 +161,22 @@ def fetch():
     database_cursor.execute("select (qName) from question where quizId=?",(newQID,))
     global question
     question=database_cursor.fetchall()
-    database_cursor.execute("select (op1,op2,op3,op4) from ans where quizId=?",(newQID,))
+    database_cursor.execute("select op1, op2, op3, op4 from ans where quizId=?",(newQID,))
     global options
     options=database_cursor.fetchall()
     database_cursor.execute("select (co) from ans where quizId=?",(newQID,))
     global correct
     correct=database_cursor.fetchall()
+    database_connection.close()
+    database_connection.commit()
 
     
 @web.route("/atQuiz/")
 def atQuiz():
-    # fetch()
+    fetch()
+    print(question)
+    print(options)
+    print(correct)
     return render_template("user_quiz.html",question=question,options=options,correct=correct)
 
 newQID=int(0)

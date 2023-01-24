@@ -39,14 +39,13 @@
 
         </div>
     </div>
-
-
-    <form action="/create_quiz" method="post">
+    {% for i in range(question|length) %}
+    <form>
     <div class="main-content">
            <div class="page_title">Quiz</div>
             
            <div class="game-question-container">
-            <h1 id="display-question"></h1>
+            <h1 id="display-question">{{question[i][0]}}</h1>
         </div>
 
         <div class="game-options-container">
