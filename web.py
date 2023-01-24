@@ -87,6 +87,7 @@ def us_log():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     database_cursor.execute("select userId from register_user where email=?",(email,))
+    global userId
     userId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_user where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
@@ -137,7 +138,7 @@ def add_question():
     database_cursor.execute("insert into question (quizId,qName) values(?,?)",(quiz_id,question))
     database_cursor.execute("select qId from question where quizId=(?) and qName=(?)",(quiz_id,question))
     q_id=database_cursor.fetchone()[0]
-    database_cursor.execute("insert into ans (qId,op1,op2,op3,op4,co) values(?,?,?,?,?,?)",(q_id,optiona,optionb,optionc,optiond,co_ans))
+    database_cursor.execute("insert into ans (qId,op1,op2,op3,op4,co,quizId) values(?,?,?,?,?,?,?)",(q_id,optiona,optionb,optionc,optiond,co_ans,quiz_id))
     database_connection.commit()
     database_connection.close()
     return redirect("/add_ques/")
@@ -151,6 +152,28 @@ def quiz():
 def qi():
     return render_template("take_test.html")
 
+question=str("")
+options=str("")
+correct=str("")
+def fetch():
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("select (qName) from question where quizId=?",(newQID,))
+    global question
+    question=database_cursor.fetchall()
+    database_cursor.execute("select (op1,op2,op3,op4) from ans where quizId=?",(newQID,))
+    global options
+    options=database_cursor.fetchall()
+    database_cursor.execute("select (co) from ans where quizId=?",(newQID,))
+    global correct
+    correct=database_cursor.fetchall()
+
+    
+@web.route("/atQuiz/")
+def atQuiz():
+    fetch()
+    return render_template("user_quiz.html",question=question,options=options,correct=correct)
+
 newQID=int(0)
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
@@ -161,6 +184,8 @@ def qidata():
     result=database_cursor.fetchone()
     if result:
         database_cursor.execute("insert into ansUser (userId,quizId) values (?,?)",(userId,newQID))
+        database_connection.commit()
+        database_connection.close()
         return redirect("/atQuiz/")
     else:
         return redirect("/takeQI/")
