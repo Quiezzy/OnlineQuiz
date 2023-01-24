@@ -2,10 +2,11 @@ from flask import Flask,render_template, request , redirect , url_for,session, f
 import tkinter
 from tkinter import *
 from tkinter import messagebox
-from db import *
-
+import sqlite3
 web =Flask(__name__)
 web.secret_key='secretkey'
+newQID=int(0)
+userId=None
 @web.route("/")
 def login():
     return render_template("login.html")
@@ -78,7 +79,7 @@ def adm_log():
         return redirect('/admin_home/')
     else:
         return redirect('/admin_login/')
-userId=None
+
 
 @web.route("/loginuser/",methods=["POST"])
 def us_log():
@@ -152,34 +153,35 @@ def quiz():
 def qi():
     return render_template("take_test.html")
 
-question=str("")
+questions=str("")
 options=str("")
 correct=str("")
 def fetch():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     database_cursor.execute("select (qName) from question where quizId=?",(newQID,))
-    global question
-    question=database_cursor.fetchall()
+    global questions
+    questions=database_cursor.fetchall()
     database_cursor.execute("select op1, op2, op3, op4 from ans where quizId=?",(newQID,))
     global options
     options=database_cursor.fetchall()
     database_cursor.execute("select (co) from ans where quizId=?",(newQID,))
     global correct
     correct=database_cursor.fetchall()
-    database_connection.close()
     database_connection.commit()
+    database_connection.close()
+
 
     
 @web.route("/atQuiz/")
 def atQuiz():
     fetch()
-    print(question)
+    print(questions)
     print(options)
     print(correct)
-    return render_template("user_quiz.html",question=question,options=options,correct=correct)
+    return render_template("user_quiz.html",question=questions,options=options,correct=correct)
 
-newQID=int(0)
+
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
     newQID=request.form["quiz_id"]
@@ -188,6 +190,7 @@ def qidata():
     database_cursor.execute("select (quizId) from Quiz where quizId=?",(newQID,))
     result=database_cursor.fetchone()
     if result:
+        print(userId,newQID)
         database_cursor.execute("insert into ansUser (userId,quizId) values (?,?)",(userId,newQID))
         database_connection.commit()
         database_connection.close()
