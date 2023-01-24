@@ -60,12 +60,17 @@ def admin_home():
 def user_home():
     return render_template("user_home.html")
 
+adminId=None
+
 @web.route("/loginadmin/",methods=["POST"])
 def adm_log():
     email=request.form["email"]
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
+    database_cursor.execute("select adminId from register_admin where email=? and password=?",(email,password))
+    global adminId
+    adminId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
     if result:
@@ -100,7 +105,7 @@ def create_quiz():
     quiz_name=request.form["quiz_name"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    database_cursor.execute("insert into Quiz (quizId,quizName) values (?,?)",(quiz_id,quiz_name))
+    database_cursor.execute("insert into Quiz (quizId,quizName,adminId) values (?,?,?)",(quiz_id,quiz_name,adminId))
     database_connection.commit()
     database_connection.close()
     return redirect("/add_ques/")
@@ -126,7 +131,7 @@ def add_question():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     print("Quiz_id",quiz_id)
-    database_cursor.execute("insert into question (quizId,qName) values(?,?)",(quiz_id,question,))
+    database_cursor.execute("insert into question (quizId,qName) values(?,?)",(quiz_id,question))
     database_cursor.execute("select qId from question where quizId=(?) and qName=(?)",(quiz_id,question))
     q_id=database_cursor.fetchone()[0]
     database_cursor.execute("insert into ans (qId,op1,op2,op3,op4,co) values(?,?,?,?,?,?)",(q_id,optiona,optionb,optionc,optiond,co_ans))
