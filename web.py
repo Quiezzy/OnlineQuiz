@@ -78,6 +78,7 @@ def adm_log():
         return redirect('/admin_home/')
     else:
         return redirect('/admin_login/')
+userId=None
 
 @web.route("/loginuser/",methods=["POST"])
 def us_log():
@@ -85,6 +86,8 @@ def us_log():
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
+    database_cursor.execute("select userId from register_user where email=?",(email,))
+    userId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_user where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
     if result:
@@ -144,6 +147,24 @@ def add_question():
 def quiz():
     return render_template("create_quiz.html")
 
+@web.route("/takeQI/")   
+def qi():
+    return render_template("take_test.html")
+
+newQID=int(0)
+@web.route("/takeQIdata/",methods=["POST","GET"])   
+def qidata():
+    newQID=request.form["quiz_id"]
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    database_cursor.execute("select (quizId) from Quiz where quizId=?",(newQID,))
+    result=database_cursor.fetchone()
+    if result:
+        database_cursor.execute("insert into ansUser (userId,quizId) values (?,?)",(userId,newQID))
+        return redirect("/atQuiz/")
+    else:
+        return redirect("/takeQI/")
+    
 if __name__=="__main__":
     web.run(debug=True,port=8000)
 
