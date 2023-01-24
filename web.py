@@ -171,7 +171,7 @@ def fetch():
     
 @web.route("/atQuiz/")
 def atQuiz():
-    fetch()
+    # fetch()
     return render_template("user_quiz.html",question=question,options=options,correct=correct)
 
 newQID=int(0)
