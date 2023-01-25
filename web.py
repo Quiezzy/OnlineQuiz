@@ -162,9 +162,10 @@ options=None
 correct=None
 i=int(-1)
 count=int(0)
-@web.route("/atQuiz/")
+@web.route("/atQuiz/",methods=["POST","GET"])
 def atQuiz():
     global i
+    global count
     i=int(i)+int(1)
     if i ==0:
      database_connection=sqlite3.connect("quizitDatabase.db")
@@ -185,8 +186,37 @@ def atQuiz():
      print("Correct answers are:",correct)
      return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     elif i<len(questions):
+        choseans=request.form['option']
+        if choseans=='optionA':
+            if options[i-1][0]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionB':
+            if options[i-1][1]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionC':
+            if options[i-1][2]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionD':
+            if options[i-1][3]==correct[i-1][0]:
+                count=int(count)+int(1)
         return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     else:
+        choseans=request.form['option']
+        if choseans=="optionA":
+            if options[i-1][0]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionB':
+            if options[i-1][1]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionC':
+            if options[i-1][2]==correct[i-1][0]:
+                count=int(count)+int(1)
+        elif choseans=='optionD':
+            if options[i-1][3]==correct[i-1][0]:
+                count=int(count)+int(1)
+        print("Your Score is :",count)
+        count=0
+        i=int(-1)
         return redirect("/register/")
 
 
