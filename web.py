@@ -219,7 +219,6 @@ def atQuiz():
         i=int(-1)
         return redirect("/register/")
 
-
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
     global newQID
