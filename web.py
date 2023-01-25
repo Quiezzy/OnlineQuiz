@@ -74,6 +74,8 @@ def adm_log():
     adminId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
+    database_connection.commit()
+    database_connection.close()
     if result:
         flash("login Successful")
         return redirect('/admin_home/')
@@ -92,6 +94,8 @@ def us_log():
     userId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_user where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
+    database_connection.commit()
+    database_connection.close()
     if result:
         flash("login Successful")
         return redirect('/user_home/')
@@ -153,37 +157,42 @@ def quiz():
 def qi():
     return render_template("take_test.html")
 
-questions=str("")
-options=str("")
-correct=str("")
-def fetch():
-    database_connection=sqlite3.connect("quizitDatabase.db")
-    database_cursor=database_connection.cursor()
-    database_cursor.execute("select (qName) from question where quizId=?",(newQID,))
-    global questions
-    questions=database_cursor.fetchall()
-    database_cursor.execute("select op1, op2, op3, op4 from ans where quizId=?",(newQID,))
-    global options
-    options=database_cursor.fetchall()
-    database_cursor.execute("select (co) from ans where quizId=?",(newQID,))
-    global correct
-    correct=database_cursor.fetchall()
-    database_connection.commit()
-    database_connection.close()
-
-
-    
+questions=None
+options=None
+correct=None
+i=int(-1)
+count=int(0)
 @web.route("/atQuiz/")
 def atQuiz():
-    fetch()
-    print(questions)
-    print(options)
-    print(correct)
-    return render_template("user_quiz.html",question=questions,options=options,correct=correct)
+    global i
+    i=int(i)+int(1)
+    if i ==0:
+     database_connection=sqlite3.connect("quizitDatabase.db")
+     database_cursor=database_connection.cursor()
+     global questions
+     questions=database_cursor.execute("select (qName) from question where quizId=?",(newQID,))
+     questions=questions.fetchall()
+     global options
+     options=database_cursor.execute("select op1,op2,op3,op4 from ans where quizId=?",(newQID,))
+     options=options.fetchall()
+     global correct
+     correct=database_cursor.execute("select (co) from ans where quizId=?",(newQID,))
+     correct=correct.fetchall()
+     database_connection.commit()
+     database_connection.close()
+     print("Questions are:",questions)
+     print("options are:",options)
+     print("Correct answers are:",correct)
+     return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
+    elif i<len(questions):
+        return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
+    else:
+        return redirect("/register/")
 
 
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
+    global newQID
     newQID=request.form["quiz_id"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
