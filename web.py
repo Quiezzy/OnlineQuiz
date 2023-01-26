@@ -160,6 +160,7 @@ def qi():
 questions=None
 options=None
 correct=None
+trcount=None
 i=int(-1)
 count=int(0)
 @web.route("/atQuiz/",methods=["POST","GET"])
@@ -217,12 +218,14 @@ def atQuiz():
         print("Your Score is :",count)
         database_connection=sqlite3.connect("quizitDatabase.db")
         database_cursor=database_connection.cursor()
-        database_cursor.execute("insert into userResult values(?,?,?,?)",(newQID,userId,count,len(questions)))
+        database_cursor.execute("insert into ansUser (userId,quizId,result,total) values (?,?,?,?)",(userId,newQID,count,len(questions)))
         database_connection.commit()
         database_connection.close()
+        global trcount
+        trcount=int(count)
         count=0
         i=int(-1)
-        return redirect("/register/")
+        return redirect("/userScore/")
 
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
@@ -234,13 +237,16 @@ def qidata():
     result=database_cursor.fetchone()
     if result:
         print(userId,newQID)
-        database_cursor.execute("insert into ansUser (userId,quizId) values (?,?)",(userId,newQID))
-        database_connection.commit()
-        database_connection.close()
         return redirect("/atQuiz/")
     else:
         return redirect("/takeQI/")
     
+@web.route("/userScore/")
+def userscore():
+    global trcount
+    global questions
+    return render_template("score.html",count=trcount,total=len(questions))
+
 if __name__=="__main__":
     web.run(debug=True,port=8000)
 
