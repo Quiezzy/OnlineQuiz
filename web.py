@@ -215,6 +215,11 @@ def atQuiz():
             if options[i-1][3]==correct[i-1][0]:
                 count=int(count)+int(1)
         print("Your Score is :",count)
+        database_connection=sqlite3.connect("quizitDatabase.db")
+        database_cursor=database_connection.cursor()
+        database_cursor.execute("insert into userResult values(?,?,?,?)",(newQID,userId,count,len(questions)))
+        database_connection.commit()
+        database_connection.close()
         count=0
         i=int(-1)
         return redirect("/register/")
