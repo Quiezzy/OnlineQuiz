@@ -58,13 +58,14 @@ a.active, .btn:hover{
 body {
     display: flex;
     flex-flow: column;
+    
 }
 
 .main-content{
    margin-left: 25%;
    margin-top: 25px;
    
-    background-color: #fff;
+
     box-shadow: 0 0 50px 0 rgba(0,0,0,0.2);
     min-height: 550px;
     min-width: 500px;
@@ -83,11 +84,18 @@ body {
 }
 
 
+
+
 @media screen and (min-width:750px){
    
    
     .main-content{
-        margin-right: 50px
+        margin-right: 50px;
+        background-image: url("/static/resultimage.jpg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: 50%;
+        text-align: center;
     }
 
 }
@@ -99,11 +107,16 @@ body {
     }
 
     .main-content{
-        margin-right: 300px;
+        margin-right: 60px;
+        
     }
 
 }
 
-.h{
-    text-align: center;
+.page_title{
+    font-size: 50px;
+}
+
+.h2{
+    font-size: 50px;
 }
