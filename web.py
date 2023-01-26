@@ -61,7 +61,7 @@ def admin_home():
 def user_home():
     return render_template("user_home.html")
 
-adminId=None
+adminId=str("")
 
 @web.route("/loginadmin/",methods=["POST"])
 def adm_log():
@@ -69,9 +69,9 @@ def adm_log():
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    database_cursor.execute("select adminId from register_admin where email=? and password=?",(email,password))
     global adminId
-    adminId=database_cursor.fetchone()[0]
+    adminId=database_cursor.execute("select adminId from register_admin where email=? and password=?",(email,password))
+    adminId=adminId.fetchone()[0]
     database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
     database_connection.commit()
@@ -246,6 +246,65 @@ def userscore():
     global trcount
     global questions
     return render_template("score.html",count=trcount,total=len(questions))
+
+@web.route("/userResult/")
+def userResult():
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    quizName=database_cursor.execute("select (quizName) from Quiz where quizId IN (select (quizId) from ansUser where userId=?)",(userId,))
+    quizName=quizName.fetchall()
+    score=database_cursor.execute("select (result) from ansUser where userId=?",(userId,))
+    score=score.fetchall()
+    total=database_cursor.execute("select (total) from ansUser where userId=?",(userId,))
+    total=total.fetchall()
+    database_connection.commit()
+    database_connection.close()
+    print("quizName",quizName)
+    return render_template("userResult.html",quizName=quizName,score=score,total=total)
+
+@web.route("/adminViewQuiz/")
+def adminViewQuiz():
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    quizName=database_cursor.execute("select (quizName) from Quiz where adminId=?",(adminId,))
+    quizName=quizName.fetchall()
+    print(quizName)
+    return render_template("adminViewQuiz.html",quizName=quizName)
+
+@web.route("/adminResult/")
+def adminResult():
+    database_connection=sqlite3.connect("quizitDatabase.db")
+    database_cursor=database_connection.cursor()
+    name=database_cursor.execute("select (name) from register_user where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
+    name=name.fetchall()
+    quizName=database_cursor.execute("select (quizName) from Quiz where quizId IN (select (quizId) from ansUser where userId IN (select (userId) from ansUser where quizId IN(select (quizId) from Quiz where adminId=?)))",(adminId,))
+    quizName=quizName.fetchall()
+    score=database_cursor.execute("select (result) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?)",(adminId,))
+    score=score.fetchall()
+    total=database_cursor.execute("select (total) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?)",(adminId,))
+    total=total.fetchall()
+    print("name:",name)
+    print("quizname:",quizName)
+    print("score:",score)
+    print("total:",total)
+    return render_template("adminResult.html",name=name,quizName=quizName,score=score,total=total)
+# @web.route("/userResultData/",methods=["POST","GET"])
+# def userResultData():
+#     global userId
+#     database_connection=sqlite3.connect("quizitDatabase.db")
+#     database_cursor=database_connection.cursor()
+#     quizName=database_cursor.execute("select (quizName) from Quiz where quizId=(select (quizId) from ansUser where userId=?)",(userId,))
+#     quizName=quizName.fetchall
+#     score=database_cursor.execute("select (result) from ansUser where userId=?",(userId,))
+#     score=score.fetchall()
+#     total=database_cursor.execute("select (total) from ansUser where userId=?",(userId,))
+#     total=total.fetchall()
+#     print("quizName",quizName)
+#     return render_template("userResult.html",quizName=quizName,score=score,total=total)
+
+# @web.route("/userResultData",methods=["GET"])
+# def userResultData():
+
 
 if __name__=="__main__":
     web.run(debug=True,port=8000)

@@ -43,13 +43,13 @@
             <span><h3>Score</h3></span>
         </div>
     </div>
-
+    {% for i in range(score|length) %}
     <div class="main-content">
-        
         <div class="titles">
-            <span><label for="quiz"></label></span>
-            <span><label for="score"></label></span>
+            <span><label for="quiz">{{quizName[i][0]}}</label></span>
+            <span><label for="score">{{score[i][0]}}/{{total[i][0]}}</label></span>
         </div>
     </div>
+    {% endfor %}
 </body>
 </html>
