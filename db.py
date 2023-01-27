@@ -1,4 +1,6 @@
 import sqlite3
+import tkinter
+from tkinter import messagebox
 def adminResult():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
@@ -21,4 +23,6 @@ def adminResult():
     print("quizname:",newName)
     print("score:",score)
     print("total:",total)
-adminResult()
+root=tkinter.Tk()
+root.withdraw()
+messagebox.showerror("ERROR","This is error message")
