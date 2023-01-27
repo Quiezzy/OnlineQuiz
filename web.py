@@ -100,6 +100,9 @@ def us_log():
         flash("login Successful")
         return redirect('/user_home/')
     else:
+        root=tkinter.Tk()
+        root.withdraw()
+        messagebox.showerror("ERROR","This is error message")
         return redirect('/user/')
 
 @web.route("/add_ques/")
