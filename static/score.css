@@ -50,6 +50,7 @@ a.active, .btn:hover{
 }
 
 
+
 .sidebar-menu a span:first-child{
     font-size: 1.5rem;
     padding-right: 1rem;
@@ -84,21 +85,29 @@ body {
 }
 
 
+h2{
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 35px;
 
+}
 
 @media screen and (min-width:750px){
    
    
     .main-content{
         margin-right: 50px;
+        
+        text-align: center;
+        
+    }
+.bg{
         background-image: url("/static/resultimage.jpg");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: 50%;
-        text-align: center;
-       
-    }
-
+        opacity: 0.8;
+}
 }
 
 
@@ -134,10 +143,19 @@ button{
     text-align: center;
    background:linear-gradient(68.6deg, rgb(252, 165, 241) 1.8%, rgb(181, 255, 255) 100.5%); 
     cursor: pointer;
-    margin: 8px 70px;
-    margin-top: 160px;
+    margin-top: 170px;
+    margin-left: 25px;
 }
 
 .btn:hover{
     opacity: 0.8;
+}
+
+.btnn:hover{
+    
+   
+   
+    border-radius: 30px;
+    opacity: .6;
+    
 }
