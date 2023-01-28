@@ -57,16 +57,17 @@ def doReg():
 def admin_home():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    admindata=database_cursor.execute("select (name,email,password) from register_admin where adminId=?",(adminId,))
-    admindata=admindata.fetchone()
+    admindata=database_cursor.execute("select name,email,password from register_admin where adminId=?",(adminId,))
+    admindata=admindata.fetchall()
+    print(admindata)
     return render_template("admin_home.html",admindata=admindata)
 
 @web.route("/user_home/")
 def user_home():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    userdata=database_cursor.execute("select (name,email,password) from register_user where userId=?",(userId,))
-    userdata=userdata.fetchone()
+    userdata=database_cursor.execute("select name,email,password from register_user where userId=?",(userId,))
+    userdata=userdata.fetchall()
     return render_template("user_home.html",userdata=userdata)
 
 adminId=str("")
@@ -277,7 +278,7 @@ def userResult():
 def adminViewQuiz():
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    viewQuiz=database_cursor.execute("select (quizId,quizName) from Quiz where adminId=?",(adminId,))
+    viewQuiz=database_cursor.execute("select quizId,quizName from Quiz where adminId=?",(adminId,))
     viewQuiz=viewQuiz.fetchall()
     database_connection.commit()
     database_connection.close()
