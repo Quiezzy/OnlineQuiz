@@ -82,14 +82,16 @@ body {
    font-size: 24px;
 }
 .titles span h3 {
-    display: inline;
-    padding-right: 40%;
-    padding-left: 5%
+    display: inline-flex;
+    width: fit-content;
+    padding-right: 350px;
+    padding-left: 50px;
  }
 .titles span label {
-    display: inline;
-    padding-right: 40%;
-    padding-left: 5%
+    display: inline-flex;
+    width: fit-content;
+    margin-right: 300px;
+    padding-left: 50px;
 }
 
 
