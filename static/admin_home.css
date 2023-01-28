@@ -104,9 +104,7 @@ body {
         margin-right: auto;
         height: 150px;
         width: 150px;
-    }
-    .label1{
-        margin-bottom: 30px;
+        border-radius: 50%;
     }
 
 }
