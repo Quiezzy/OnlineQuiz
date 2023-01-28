@@ -78,19 +78,20 @@ def adm_log():
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    global adminId
-    adminId=database_cursor.execute("select adminId from register_admin where email=? and password=?",(email,password))
-    adminId=adminId.fetchone()[0]
     database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
-    database_connection.commit()
-    database_connection.close()
     if result:
-        flash("login Successful")
+        global adminId
+        adminId=database_cursor.execute("select (adminId) from register_admin where email=? and password=?",(email,password))
+        adminId=adminId.fetchone()[0]
+        flash("login Successful !",category='sucess')
         return redirect('/admin_home/')
     else:
+        flash("Invalid Email or Password",category='error')
         return redirect('/admin_login/')
-
+@web.route("/demo/")
+def demo():
+    return render_template("demo.html")
 
 @web.route("/loginuser/",methods=["POST"])
 def us_log():

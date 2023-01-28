@@ -5,9 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/static/admin_login.css">
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat&display=swap" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"> -->
 </head>
+<header>
+</header>
 <body>
     <div class="container">
         <div class="login-left">
@@ -27,7 +33,7 @@
                         <label for="password" class="label">Password</label><br>
                         <input type="password" name="password" id="password" placeholder="Enter password">
                     </div>
-                    <button type="signup">Sign In</button>
+                    <button class="btn" type="signup">Sign In</button>
                 </div>
                 <div class="signup-form-footer">
                     <a href="/register/">Don't have an account? Sign Up</a>
