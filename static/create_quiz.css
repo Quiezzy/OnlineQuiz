@@ -132,8 +132,16 @@ button:hover{
   opacity: .7;
 }
 
+.add_question{
+    display: grid;
+    justify-items: center;
+    grid-gap: 50px  
+}
+
+label{
 
 
+}
 
 @media screen and (min-width:750px){
    
