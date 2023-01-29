@@ -32,15 +32,18 @@ def doReg():
      password=request.form["password"]
      database_connection = sqlite3.connect("quizitDatabase.db")
      database_cursor = database_connection.cursor()
-    #  database_cursor.execute("SELECT email FROM register_admin WHERE email=?",(email))
-    #  result = database_cursor.fetchall()
-    #  if result:
-    #   flash('You are already registered, please log in')
-    #   return redirect('/admin_login/')
-    #  else:
+     database_cursor.execute("select (email) from register_admin where email=?",(email,))
+     result=database_cursor.fetchone()
+     if result:
+        flash("Email Already Exist !",category='error')
+        return redirect('/register/')
+     elif len(password)<6:
+        flash("Password must be atleast 6 character long",category='error')
+        return redirect('/register/')
      database_cursor.execute("insert into register_admin (name,email,password) values (?,?,?)",(name,email,password))
      database_connection.commit()
      database_connection.close()
+     flash("Registration Successful!",category='success')
      return redirect(url_for("admin_login"))
     else:
      name=request.form["name"]
@@ -48,9 +51,18 @@ def doReg():
      password=request.form["password"]
      database_connection = sqlite3.connect("quizitDatabase.db")
      database_cursor = database_connection.cursor()
+     database_cursor.execute("select (email) from register_user where email=?",(email,))
+     result=database_cursor.fetchone()
+     if result:
+        flash("Email Already Exist !",category='error')
+        return redirect("/register/")
+     elif len(password)<6:
+        flash("Password must be atleast 6 character long",category='error')
+        return redirect("/register/")
      database_cursor.execute("insert into register_user (name,email,password) values (?,?,?)",(name,email,password))
      database_connection.commit()
      database_connection.close()
+     flash("Registration Successful!",category='success')
      return redirect(url_for("user_login"))
 
 @web.route("/admin_home/")
@@ -84,11 +96,19 @@ def adm_log():
         global adminId
         adminId=database_cursor.execute("select (adminId) from register_admin where email=? and password=?",(email,password))
         adminId=adminId.fetchone()[0]
-        flash("login Successful !",category='sucess')
+        flash("Login Successful!",category='success')
         return redirect('/admin_home/')
     else:
-        flash("Invalid Email or Password",category='error')
-        return redirect('/admin_login/')
+        database_cursor.execute("select (email) from register_admin where email=?",(email,))
+        email=database_cursor.fetchone()
+        database_connection.commit()
+        database_connection.close()
+        if email:
+         flash("Invalid Email or Password!",category='error')
+         return redirect('/admin_login/')
+        else:
+            flash("User not Registered with us, kindly Register!",category='error')
+            return redirect('/register/')
 @web.route("/demo/")
 def demo():
     return render_template("demo.html")
@@ -99,21 +119,25 @@ def us_log():
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    database_cursor.execute("select userId from register_user where email=?",(email,))
-    global userId
-    userId=database_cursor.fetchone()[0]
     database_cursor.execute("select * from register_user where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
-    database_connection.commit()
-    database_connection.close()
     if result:
-        flash("login Successful")
+        global userId
+        userId=database_cursor.execute("select userId from register_user where email=?",(email,))
+        userId=userId.fetchone()[0]
+        flash("Login Successful!",category='success')
         return redirect('/user_home/')
     else:
-        root=tkinter.Tk()
-        root.withdraw()
-        messagebox.showerror("ERROR","This is error message")
-        return redirect('/user/')
+        database_cursor.execute("select (email) from register_user where email=?",(email,))
+        email=database_cursor.fetchone()
+        database_connection.commit()
+        database_connection.close()
+        if email:
+         flash("Invalid Email or Password!",category='error')
+         return redirect('/user/')
+        else:
+            flash("User not Registered with us, kindly Register!",category='error')
+            return redirect('/register/')
 
 @web.route("/add_ques/")
 def add_ques():
@@ -176,10 +200,10 @@ correct=None
 trcount=None
 i=int(-1)
 count=int(0)
+trace=int(1)
 @web.route("/atQuiz/",methods=["POST","GET"])
 def atQuiz():
-    global i
-    global count
+    global count,trace,i
     i=int(i)+int(1)
     if i ==0:
      database_connection=sqlite3.connect("quizitDatabase.db")
@@ -200,6 +224,13 @@ def atQuiz():
      print("Correct answers are:",correct)
      return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     elif i<len(questions):
+        print(i)
+        print(trace)
+        print('hello')
+        if(not(i==trace) and trace>=2):
+            i=int(i)-int(2)
+            flash("Sorry you can't go to previous question",category='error')
+            return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i) 
         choseans=request.form['option']
         if choseans=='optionA':
             if options[i-1][0]==correct[i-1][0]:
@@ -213,8 +244,17 @@ def atQuiz():
         elif choseans=='optionD':
             if options[i-1][3]==correct[i-1][0]:
                 count=int(count)+int(1)
+                trace=int(trace)+int(1)
+        trace=int(trace)+int(1)
         return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     else:
+        print(i)
+        print(trace)
+        print('hello')
+        if(not(i==trace) and trace>=2):
+            i=int(i)-int(2)
+            flash("Sorry you can't go to previous question",category='error')
+            return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
         choseans=request.form['option']
         if choseans=="optionA":
             if options[i-1][0]==correct[i-1][0]:
@@ -234,6 +274,7 @@ def atQuiz():
         database_cursor.execute("insert into ansUser (userId,quizId,result,total) values (?,?,?,?)",(userId,newQID,count,len(questions)))
         database_connection.commit()
         database_connection.close()
+        trace=int(trace)+int(1)
         global trcount
         trcount=int(count)
         count=0
@@ -242,16 +283,32 @@ def atQuiz():
 
 @web.route("/takeQIdata/",methods=["POST","GET"])   
 def qidata():
+    global i,count,trace
+    i=int(-1)
+    count=int(0)
+    trace=int(1)
     global newQID
     newQID=request.form["quiz_id"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
+    global userId
+    if userId==None:
+        flash("Sorry! Your session has been expired",category='error')
+        return redirect('/user/')
+    database_cursor.execute("select (quizId) from ansUser where quizId=? and userId=?",(newQID,userId))
+    check=database_cursor.fetchone()
+    if check:
+        flash("You have already attempted this quiz!",category='success')
+        return redirect('/takeQI/')
     database_cursor.execute("select (quizId) from Quiz where quizId=?",(newQID,))
     result=database_cursor.fetchone()
+    database_connection.commit()
+    database_connection.close()
     if result:
         print(userId,newQID)
         return redirect("/atQuiz/")
     else:
+        flash("Invalid QuizId!",category='error')
         return redirect("/takeQI/")
     
 @web.route("/userScore/")
@@ -304,6 +361,8 @@ def adminResult():
     score=score.fetchall()
     total=database_cursor.execute("select (total) from ansUser where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
     total=total.fetchall()
+    database_connection.commit()
+    database_connection.close()
     print("name:",name)
     print("quizname:",newName)
     print("score:",score)

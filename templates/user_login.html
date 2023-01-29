@@ -7,7 +7,28 @@
     <title>Sign In</title>
     <link rel="stylesheet" href="/static/user_login.css">
     <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Montserrat&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
+<header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+   {% for category, message in messages %}
+   {% if category== 'error' %}
+   <div class="alert alert-danger alert-dismissible">
+     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+     <span>{{ message }}</span>
+   </div>
+   {% else %}
+   <div class="alert alert-success alert-dismissible">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <span>{{ message }}</span>
+  </div>
+  {% endif %}
+   {% endfor %}
+   {% endif %}
+   {% endwith %}
+</header>
 <body>
     <div class="container">
         <div class="login-left">
@@ -21,11 +42,11 @@
                     <div class="form-item">
                         
                         <label for="email" class="label">Email</label><br>
-                        <input type="text" name="email" placeholder="Enter Email" id="name">
+                        <input type="text" name="email" placeholder="Enter Email" id="name" required>
                     </div>
                     <div class="form-item">
                         <label for="password" class="label" >Password</label><br>
-                        <input type="password" name="password" placeholder="Enter password" id="password">
+                        <input type="password" name="password" placeholder="Enter password" id="password" required>
                     </div>
                     <button type="signup" class="btn">Sign Up</button>
                 </div>

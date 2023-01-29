@@ -1,12 +1,55 @@
 *{
     box-sizing: border-box;
 }
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.alert-dismissable .close, .alert-dismissible .close {
+    color: inherit;
+}
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .2;
+}
+a {
+    text-decoration: none;
+}
+
+a {
+    background-color: transparent;
+}
 body{
     padding: 0;
     margin: 0;
     background: linear-gradient(68.6deg, rgb(252, 165, 241) 1.8%, rgb(181, 255, 255) 100.5%); 
-    padding: 40px;
 }
+
+.container{
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 710px;
+}
+
 .login-left{
     text-align: center;
     display: flex;
@@ -18,8 +61,9 @@ body{
     position:absolute;
     transform: translate(-50%,50%);
     box-sizing: border-box;
-    padding:40px 20px;
+    padding: 50px 15px ;
     border-radius: 10px;
+    width: 400px;
 }
 .login-form-content{
     font-size: 18px;
@@ -36,7 +80,7 @@ input[type='password']{
     outline: none;
     font-size: 18px;
     border-radius: 100px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 button{
     width:75%;
