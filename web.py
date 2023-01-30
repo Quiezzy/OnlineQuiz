@@ -22,7 +22,7 @@ def user_login():
 @web.route("/register/")
 def register():
     return render_template("register.html")
-
+adminId=None
 @web.route("/reg/",methods=["POST"])
 def doReg():
     selectedValue= request.form['size']
@@ -65,27 +65,33 @@ def doReg():
      flash("Registration Successful!",category='success')
      return redirect(url_for("user_login"))
 
+admindata=None
 @web.route("/admin_home/")
 def admin_home():
+    global admindata
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     admindata=database_cursor.execute("select name,email,password from register_admin where adminId=?",(adminId,))
     admindata=admindata.fetchall()
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     print(admindata)
     return render_template("admin_home.html",admindata=admindata)
-
+userdata=None
 @web.route("/user_home/")
 def user_home():
+    global userdata
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     userdata=database_cursor.execute("select name,email,password from register_user where userId=?",(userId,))
     userdata=userdata.fetchall()
     return render_template("user_home.html",userdata=userdata)
 
-adminId=str("")
 
 @web.route("/loginadmin/",methods=["POST"])
 def adm_log():
+    global adminId
     email=request.form["email"]
     password=request.form["password"]
     database_connection=sqlite3.connect("quizitDatabase.db")
@@ -93,7 +99,6 @@ def adm_log():
     database_cursor.execute("select * from register_admin where email=? and password=? ",(email,password))
     result=database_cursor.fetchone()
     if result:
-        global adminId
         adminId=database_cursor.execute("select (adminId) from register_admin where email=? and password=?",(email,password))
         adminId=adminId.fetchone()[0]
         flash("Login Successful!",category='success')
@@ -141,16 +146,29 @@ def us_log():
 
 @web.route("/add_ques/")
 def add_ques():
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     return render_template("add_question.html")
     
 quiz_id=int(0)
 @web.route("/create_quiz/",methods=["POST"])   
 def create_quiz():
     global quiz_id
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     quiz_id=request.form["quiz_id"]
     quiz_name=request.form["quiz_name"]
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
+    database_cursor.execute("select (quizId) from Quiz where quizId=?",(quiz_id,))
+    result=database_cursor.fetchone()
+    if result:
+        flash("Quiz Id alreay exist!",category='error')
+        return redirect("/quiz/")
     database_cursor.execute("insert into Quiz (quizId,quizName,adminId) values (?,?,?)",(quiz_id,quiz_name,adminId))
     database_connection.commit()
     database_connection.close()
@@ -159,6 +177,10 @@ def create_quiz():
 
 @web.route("/add_question",methods=["POST"])
 def add_question():
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     question=request.form["question"]
     optiona=request.form["optiona"]
     optionb=request.form["optionb"]
@@ -183,11 +205,16 @@ def add_question():
     database_cursor.execute("insert into ans (qId,op1,op2,op3,op4,co,quizId) values(?,?,?,?,?,?,?)",(q_id,optiona,optionb,optionc,optiond,co_ans,quiz_id))
     database_connection.commit()
     database_connection.close()
+    flash("Question added successfully",category='success')
     return redirect("/add_ques/")
 
 
 @web.route("/quiz/")   
 def quiz():
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     return render_template("create_quiz.html")
 
 @web.route("/takeQI/")   
@@ -203,9 +230,9 @@ count=int(0)
 trace=int(1)
 @web.route("/atQuiz/",methods=["POST","GET"])
 def atQuiz():
-    global count,trace,i
+    global count,i
     i=int(i)+int(1)
-    if i ==0:
+    if i==0 :
      database_connection=sqlite3.connect("quizitDatabase.db")
      database_cursor=database_connection.cursor()
      global questions
@@ -224,14 +251,13 @@ def atQuiz():
      print("Correct answers are:",correct)
      return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     elif i<len(questions):
-        print(i)
-        print(trace)
-        print('hello')
-        if(not(i==trace) and trace>=2):
-            i=int(i)-int(2)
+        try:
+            choseans=request.form['option']
+        except:
+            i=int(i)-int(1)
             flash("Sorry you can't go to previous question",category='error')
-            return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i) 
-        choseans=request.form['option']
+            return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
+        print(choseans)
         if choseans=='optionA':
             if options[i-1][0]==correct[i-1][0]:
                 count=int(count)+int(1)
@@ -244,18 +270,14 @@ def atQuiz():
         elif choseans=='optionD':
             if options[i-1][3]==correct[i-1][0]:
                 count=int(count)+int(1)
-                trace=int(trace)+int(1)
-        trace=int(trace)+int(1)
         return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
     else:
-        print(i)
-        print(trace)
-        print('hello')
-        if(not(i==trace) and trace>=2):
-            i=int(i)-int(2)
+        try:
+            choseans=request.form['option']
+        except:
+            i=int(i)-int(1)
             flash("Sorry you can't go to previous question",category='error')
             return render_template("user_quiz.html",questions=questions,options=options,correct=correct,i=i)
-        choseans=request.form['option']
         if choseans=="optionA":
             if options[i-1][0]==correct[i-1][0]:
                 count=int(count)+int(1)
@@ -274,7 +296,6 @@ def atQuiz():
         database_cursor.execute("insert into ansUser (userId,quizId,result,total) values (?,?,?,?)",(userId,newQID,count,len(questions)))
         database_connection.commit()
         database_connection.close()
-        trace=int(trace)+int(1)
         global trcount
         trcount=int(count)
         count=0
@@ -334,6 +355,10 @@ def userResult():
 
 @web.route("/adminViewQuiz/")
 def adminViewQuiz():
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     viewQuiz=database_cursor.execute("select quizId,quizName from Quiz where adminId=?",(adminId,))
@@ -345,6 +370,10 @@ def adminViewQuiz():
 
 @web.route("/adminResult/")
 def adminResult():
+    global admindata
+    if not(admindata):
+        flash("Your Session has been expired!",category='error')
+        return redirect("/admin_login/")
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
     name=database_cursor.execute("select (name) from register_user inner join ansUser on ansUser.userId=register_user.userId where ansUser.userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
