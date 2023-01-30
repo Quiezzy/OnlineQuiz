@@ -52,12 +52,12 @@
             <span><h3>Score</h3></span>
         </div>
     </div>
-    {% for i in range(name|length) %}
+    {% for i in range(result|length) %}
     <div class="main-content">
         <div class="titles">
-            <span><label for="name">{{name[i][0]}}</label></span>
-            <span><label for="quiz">{{quizName[i][0]}}</label></span>
-            <span><label for="score">{{score[i][0]}}/{{total[i][0]}}</label></span>
+            <span><label for="name">{{result[i][0]}}</label></span>
+            <span><label for="quiz">{{result[i][1]}}</label></span>
+            <span><label for="score">{{result[i][2]}}/{{result[i][3]}}</label></span>
         </div>
     </div>
     {% endfor %}

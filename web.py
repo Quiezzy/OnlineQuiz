@@ -294,6 +294,13 @@ def atQuiz():
         database_connection=sqlite3.connect("quizitDatabase.db")
         database_cursor=database_connection.cursor()
         database_cursor.execute("insert into ansUser (userId,quizId,result,total) values (?,?,?,?)",(userId,newQID,count,len(questions)))
+        uname=database_cursor.execute("select (name) from register_user where userId=?",(userId,))
+        uname=uname.fetchone()[0]
+        qname=database_cursor.execute("select (quizName) from Quiz where quizId=?",(newQID,))
+        qname=qname.fetchone()[0]
+        adId=database_cursor.execute("select (adminId) from Quiz where quizId=?",(newQID,))
+        adId=adId.fetchone()[0]
+        database_cursor.execute("insert into adminResult values (?,?,?,?,?)",(uname,qname,count,len(questions),adId))
         database_connection.commit()
         database_connection.close()
         global trcount
@@ -376,27 +383,26 @@ def adminResult():
         return redirect("/admin_login/")
     database_connection=sqlite3.connect("quizitDatabase.db")
     database_cursor=database_connection.cursor()
-    name=database_cursor.execute("select (name) from register_user inner join ansUser on ansUser.userId=register_user.userId where ansUser.userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
-    name=name.fetchall()
-    quizName=database_cursor.execute("select (quizId) from ansUser where userId IN (select (userId) from ansUser where quizId IN(select (quizId) from Quiz where adminId=?))",(adminId,))
-    quizName=quizName.fetchall()
-    Name=None
-    newName=[]
-    for i in quizName:
-        Name=database_cursor.execute("select (quizName) from Quiz where quizId=?",(i[0],))
-        Name=Name.fetchone()
-        newName.append(Name)
-    score=database_cursor.execute("select (result) from ansUser where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
-    score=score.fetchall()
-    total=database_cursor.execute("select (total) from ansUser where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
-    total=total.fetchall()
+    displayresult=database_cursor.execute("select Name,quiz,score,total from adminResult where adminId=?",(adminId,))
+    displayresult=displayresult.fetchall()
+    # name=database_cursor.execute("select (name) from register_user inner join ansUser on ansUser.userId=register_user.userId where ansUser.userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
+    # name=name.fetchall()
+    # quizName=database_cursor.execute("select (quizId) from ansUser where userId IN (select (userId) from ansUser where quizId IN(select (quizId) from Quiz where adminId=?))",(adminId,))
+    # quizName=quizName.fetchall()
+    # Name=None
+    # newName=[]
+    # for i in quizName:
+    #     Name=database_cursor.execute("select (quizName) from Quiz where quizId=?",(i[0],))
+    #     Name=Name.fetchone()
+    #     newName.append(Name)
+    # score=database_cursor.execute("select (result) from ansUser where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
+    # score=score.fetchall()
+    # total=database_cursor.execute("select (total) from ansUser where userId IN (select (userId) from ansUser where quizId IN (select (quizId) from Quiz where adminId=?))",(adminId,))
+    # total=total.fetchall()
     database_connection.commit()
     database_connection.close()
-    print("name:",name)
-    print("quizname:",newName)
-    print("score:",score)
-    print("total:",total)
-    return render_template("adminResult.html",name=name,quizName=newName,score=score,total=total)
+    print(displayresult)
+    return render_template("adminResult.html",result=displayresult)
 # @web.route("/userResultData/",methods=["POST","GET"])
 # def userResultData():
 #     global userId
